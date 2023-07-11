@@ -1,42 +1,34 @@
 package com.tweteroo.api.model;
 
 import java.time.Instant;
-import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.tweteroo.api.dto.UserDTO;
+import com.tweteroo.api.dto.TwittesDTO;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @NoArgsConstructor
-public class Users {
+public class Twittes {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
-    @Column(length= 100, nullable = false) 
-    private String email;
-    
-    @Column(length= 30, nullable = false)
-    private String password;
-    
-    @Column(length= 70, nullable = false)
-    private String name;
+
+    @Column(length = 200, nullable = false)
+    private String twitter;
 
     @CreationTimestamp
     private Instant createdOn;
@@ -44,15 +36,15 @@ public class Users {
     @UpdateTimestamp
     private Instant lastUpdateOn;
 
-    @JsonIgnoreProperties("user")
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private List<Twittes> twitters;
+    @JsonIgnoreProperties("twitters")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Users user;
 
-
-    public Users(UserDTO data) {
-        this.name = data.name();
-        this.email = data.email();
-        this.password = data.password();
+    
+    public Twittes(TwittesDTO data, Users user) {
+        this.twitter = data.twitter();
+        this.user = user;
     }
 
 }
